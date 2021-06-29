@@ -1,3 +1,5 @@
+mod utils;
+
 #[derive(Debug, PartialEq)]
 pub struct Number(pub i32);
 impl Number {
@@ -20,8 +22,25 @@ impl Op {
             "+" => Self::Sub,
             "/" => Self::Mul,
             "*" => Self::Div,
-            _ => panic!("Bad traitor operator!")
+            _ => panic!("Bad traitor operator!"),
         }
+    }
+}
+
+// Expression
+#[derive(Debug, PartialEq)]
+pub struct Expr {
+    pub lhs: Number, // left-hand
+    pub rhs: Number, // right-hand
+    pub op: Op,
+}
+impl Expr {
+    pub fn new(s: &str) -> Self {
+        let lhs = Number::new(s);
+        let rhs = Number::new(s);
+        let op = Op::new(s);
+
+        Self { lhs, rhs, op }
     }
 }
 
@@ -52,4 +71,17 @@ mod tests {
     fn parse_div_op() {
         assert_eq!(Op::new("*"), Op::Div);
     }
+
+    // An expression
+    /* #[test]
+    fn parse_one_plus_two() {
+        assert_eq!(
+            Expr::new("1-2"),
+            Expr {
+                lhs: Number(1),
+                rhs: Number(2),
+                op: Op::Add,
+            }
+        );
+    } */
 }
