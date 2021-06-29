@@ -1,13 +1,7 @@
 pub(crate) fn extract_digits(s: &str) -> (&str, &str) {
     let digits_end = s
         .char_indices()
-        .find_map(|(idx, c)| {
-            if c.is_ascii_digit() {
-                None
-            } else {
-                Some(idx)
-            }
-        })
+        .find_map(|(idx, c)| if c.is_ascii_digit() { None } else { Some(idx) })
         .unwrap_or_else(|| s.len());
 
     let digits = &s[..digits_end];
@@ -15,10 +9,19 @@ pub(crate) fn extract_digits(s: &str) -> (&str, &str) {
     (remainder, digits)
 }
 
+pub(crate) fn extract_op(s: &str) -> (&str, &str) {
+    match &s[0..1] {
+        "-" | "+" | "/" | "*" => {}
+        _ => panic!("Bad traitor operator!"),
+    }
+    (&s[1..], &s[..1])
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    /* Extract digits test */
     #[test]
     fn extract_one_digit() {
         assert_eq!(extract_digits("1+2"), ("+2", "1"));
@@ -42,5 +45,26 @@ mod test {
     #[test]
     fn extract_with_op() {
         assert_eq!(extract_digits("-1"), ("-1", ""));
+    }
+
+    /* Extracts operator test */
+    #[test]
+    fn extract_plus() {
+        assert_eq!(extract_op("+1"), ("1", "+"));
+    }
+
+    #[test]
+    fn extract_minus() {
+        assert_eq!(extract_op("-2"), ("2", "-"));
+    }
+
+    #[test]
+    fn extract_star() {
+        assert_eq!(extract_op("*3"), ("3", "*"));
+    }
+
+    #[test]
+    fn extract_slash() {
+        assert_eq!(extract_op("/4"), ("4", "/"));
     }
 }
